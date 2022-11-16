@@ -75,13 +75,6 @@ echo IPV6FORWARDING=yes >> /etc/sysconfig/network
 echo net.ipv6.conf.eth0.accept_ra=2 >> /etc/sysctl.conf
 ```
 
-デバッグ用コマンド
-```
-ip -6 route
-tcpdump icmp6 -n
-sysctl -a|grep forward
-```
-
 iptablesでprivate⇒外部の通信はipマスカレード(アクセス元アドレスの動的変換)で出れるようにしておく
 ```
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
@@ -134,6 +127,16 @@ iptables -t nat -F
 ```
 iptables-save | grep -v "PortMapping" | iptables-restore
 ip6tables-save | grep -v "PortMapping" | ip6tables-restore
+```
+
+デバッグ用コマンド(ipv6)
+```
+ip -6 route
+tcpdump icmp6 -n
+```
+ip fowardの状態確認
+```
+sysctl -a|grep forward
 ```
 
 # jq使用例
