@@ -79,6 +79,7 @@ iptablesでprivate⇒外部の通信はipマスカレード(アクセス元ア�
 ```
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 ```
 iptables設定保存
 ```
@@ -102,7 +103,7 @@ systemctl status ip6tables
 * ※NATインスタンスのため、サーバ自身のIPアドレス宛以外のパケットも受信するための設定。
 ## セキュリティグループ
 * private ネットワークからNATインスタンスへのアクセスはSecurityGroupで開けておく。
-## NAT設定
+## NAT設定の例
 ```
 iptables -t nat -A PREROUTING -d 10.0.0.5 -p tcp --dport 8001 -j DNAT --to 10.0.135.174:80 -m comment --comment "PortMapping"
 ip6tables -t nat -A PREROUTING -d 2600:1f18:1bc7:8f00:65b0:adc4:6e38:7fd0 -p tcp --dport 8001 -j DNAT --to-destination [2600:1f18:1bc7:8f01:9e25:e543:8a42:24e9]:80 -m comment --comment "PortMapping"
@@ -129,7 +130,7 @@ iptables-save | grep -v "PortMapping" | iptables-restore
 ip6tables-save | grep -v "PortMapping" | ip6tables-restore
 ```
 
-デバッグ用コマンド(ipv6)
+# デバッグ用コマンド(ipv6)
 ```
 ip -6 route
 tcpdump icmp6 -n
