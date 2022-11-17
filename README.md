@@ -76,8 +76,12 @@ echo net.ipv6.conf.eth0.accept_ra=2 >> /etc/sysctl.conf
 ```
 
 iptablesでprivate⇒外部の通信はipマスカレード(アクセス元アドレスの動的変換)で出れるようにしておく
+FORWARDの行はコネクション接続後の通信を通過させるためのもの。
+(ipv4は記載なくても問題なかったが念のため。ipv6は記載がないとうまく動作せず)
 ```
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLIS
+HED -j ACCEPT
 ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ip6tables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 ```
